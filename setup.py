@@ -11,9 +11,7 @@ setup(
     py_modules=['artist_clustering', 'stopword_filtering', 'dictionary_tokenization', 'tokenization',
                 'wiki_rock_train', 'wiki_rock_w2v_api', 'artist_clustering', 'wsgi'],
     platforms='any',
-    data_files=[('data', ['data/all_artists.txt', 'data/rock_music.w2v', 'data/rock_music.w2v',
-                            'data/rock_music.w2v.sun0.npy', 'data/rock_music.w2v.syn1.npy',
-                            'data/stop-words-english1.txt', 'data/wiki_rock_multoword_dic.txt'])],
+    data_files=[('data', ['data/all_artists.txt', 'data/stop-words-english1.txt', 'data/wiki_rock_multoword_dic.txt'])],
     install_requires=[
         'requests>=2.2.0',
         'gensim',
