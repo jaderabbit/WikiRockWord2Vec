@@ -25,36 +25,20 @@ class EnglishSentences(object):
         print(i)
 
 
-class Corpus:
-
-  def __init__(self, globPattern, dic, tokenisr, debug=False):
-    self._glob_pattern = globPattern
-    self._dic = dic
-    self._debug = debug
-    self._tokeniser = tokenisr
-
-  def __iter__(self):
-    i = 0
-    for f in glob.glob(self._glob_pattern):
-      fs = codecs.open(f, encoding="utf-8", mode="r")
-      txt = fs.read()
-      fs.close()
-      words = self._tokeniser(txt)
-      i += 1
-      if self._debug and i % 100 == 0:
-        print(i)
-      yield self._dic.doc2bow(words)
-
-def get_text(fileName):
-  f = codecs.open(fileName, mode='r', encoding='utf-8')
-  txt = f.read()
-  f.close()
-  return txt
-
 def train_and_save(multiword_dic_path, stopword_path, corpus_files_glob_pattern, mode_file_name = 'rock_music.w2v'):
+  # Creates a tokenizer that will see multiword band names as single "tokens". Tokens are traditionally single word
   tknsr = dictionary_tokenization.DictionaryBasedMultiwordFinder(dictionary_path=multiword_dic_path)
+
+  # Retrieves a filter to remove stopwords. In natural language processing, stopwords are words that are used very often and add very little information
+  # and are so removed from the set of words. Such common words can also throw off many natural language algorithms so they occur so often 
+  # and in so many contexts that they can become overimportant to the models
   filtr = stopword_filtering.StopwordFilter(stopword_path)
+
+  # Build a function that tokenizer which will filter out stop words and create multiwords
   tokenizze = lambda text: filtr.filter(tknsr.tokenise(text))
+
+  # EnglishSentences class simply reads in all the files and applies the tokenizer to them and then returns the large corpus of english sentences.
+  # This filtered and tokenized corpus is fed to the gensim word2vec model
   wvc = gensim.models.Word2Vec(EnglishSentences(corpus_files_glob_pattern, tokenizze, True), min_count=2)
   wvc.save(mode_file_name)
 
